@@ -59,7 +59,10 @@ int main(int argc, char *argv[]) {
       }
     } else if (!strcmp(command.command, "GET")) {
       char *value = kvs_get(banco, command.key);
-      printf(value);
+      command.value = value;
+      tuple resp = processar_entrada(L, &command);
+
+      printf("%s", resp.mensagem);
       printf("\n");
     } else {
       printf("Comando não reconhecido!\n");
@@ -83,12 +86,10 @@ tuple processar_entrada(lua_State *L, Command *command){
   }
 
   //Coleta o retorno
-  int valido = lua_toboolean(L, -1);
-  lua_pop(L, 1);
   const char* mensagem = lua_tostring(L, -1);
   lua_pop(L, 1);
-  printf("%d", valido);
-  printf("%s", mensagem);
+  int valido = lua_toboolean(L, -1);
+  lua_pop(L, 1);
   lua_pop(L, 1);
 
   tuple resp;
